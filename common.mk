@@ -520,8 +520,8 @@ PRODUCT_COPY_FILES += \
 PRODUCT_SOONG_NAMESPACES += \
     $(COMMON_PATH) \
     hardware/qcom-caf/common/libqti-perfd-client \
-    hardware/google/interfaces \
-    hardware/google/pixel \
+    hardware/samsung \
+    hardware/samsung-ext \
     vendor/qcom/opensource/usb/etc \
 
 # Telephony
