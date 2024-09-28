@@ -13,6 +13,9 @@ $(call inherit-product, $(SRC_TARGET_DIR)/product/non_ab_device.mk)
 $(call inherit-product, frameworks/native/build/phone-xhdpi-6144-dalvik-heap.mk)
 $(call inherit-product, hardware/qcom-caf/common/common.mk)
 
+# Debug tools
+$(call inherit-product, hardware/samsung-ext/interfaces/debug-tools/debug.mk)
+
 COMMON_PATH := device/samsung/a71-common
 
 PRODUCT_BUILD_SUPER_PARTITION := false
@@ -56,6 +59,9 @@ PRODUCT_PACKAGES += \
     tinymix \
     tinypcminfo \
     tinyplay \
+
+PRODUCT_PACKAGES += \
+    SamsungDAP
 
 # Audio SoundFX
 PRODUCT_PACKAGES += \
@@ -243,7 +249,7 @@ PRODUCT_PACKAGES += \
 
 # Lights
 PRODUCT_PACKAGES += \
-    android.hardware.light-service.samsung \
+    vendor.samsung_ext.hardware.light-service
 
 # LiveDisplay
 PRODUCT_PACKAGES += \
@@ -586,10 +592,22 @@ PRODUCT_PACKAGES += \
     libnl \
     libwfdaac_vendor \
 
-# Samsung-ext
+# Samsung Ext
 PRODUCT_PACKAGES += \
+    vendor.samsung_ext.hardware.camera.flashlight-service \
+    vendor.samsung_ext.framework.battery-service \
+    test_lights \
     FlashControl \
-    SmartCharge
+    SmartCharge \
+    CallVolume
+
+# SamsungAdvancedDisplay
+PRODUCT_PACKAGES += \
+    AdvancedDisplay \
+
+# SamsungDoze
+PRODUCT_PACKAGES += \
+    SamsungDoze \
 
 # Get non-open-source specific aspects
 $(call inherit-product, vendor/samsung/a71-common/a71-common-vendor.mk)
