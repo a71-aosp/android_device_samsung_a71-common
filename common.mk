@@ -249,7 +249,7 @@ PRODUCT_PACKAGES += \
 
 # Lights
 PRODUCT_PACKAGES += \
-    vendor.samsung_ext.hardware.light-service
+    android.hardware.light-service.samsung \
 
 # LiveDisplay
 PRODUCT_PACKAGES += \
