@@ -13,9 +13,6 @@ $(call inherit-product, $(SRC_TARGET_DIR)/product/non_ab_device.mk)
 $(call inherit-product, frameworks/native/build/phone-xhdpi-6144-dalvik-heap.mk)
 $(call inherit-product, hardware/qcom-caf/common/common.mk)
 
-# Debug tools
-$(call inherit-product, hardware/samsung-ext/interfaces/debug-tools/debug.mk)
-
 COMMON_PATH := device/samsung/a71-common
 
 PRODUCT_BUILD_SUPER_PARTITION := false
