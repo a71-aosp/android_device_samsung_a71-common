@@ -595,11 +595,7 @@ PRODUCT_PACKAGES += \
 # Samsung Ext
 PRODUCT_PACKAGES += \
     vendor.samsung_ext.hardware.camera.flashlight-service \
-    vendor.samsung_ext.framework.battery-service \
-    test_lights \
-    FlashControl \
-    SmartCharge \
-    CallVolume
+    FlashControl
 
 # Get non-open-source specific aspects
 $(call inherit-product, vendor/samsung/a71-common/a71-common-vendor.mk)
