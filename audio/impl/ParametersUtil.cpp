@@ -87,17 +87,17 @@ void ParametersUtil::getParametersImpl(
             retval = getHalStatusToResult(status);
             break;
         }
-        result[i].key = halKey.c_str();
-        result[i].value = halValue.c_str();
+        result[i].key = halKey.string();
+        result[i].value = halValue.string();
     }
     cb(retval, result);
 }
 
 std::unique_ptr<AudioParameter> ParametersUtil::getParams(const AudioParameter& keys) {
     String8 paramsAndValues;
-    char* halValues = halGetParameters(keys.keysToString().c_str());
+    char* halValues = halGetParameters(keys.keysToString().string());
     if (halValues != NULL) {
-        paramsAndValues = halValues;
+        paramsAndValues.setTo(halValues);
         free(halValues);
     } else {
         paramsAndValues.clear();
@@ -157,7 +157,7 @@ Result ParametersUtil::setParam(const char* name, const DeviceAddress& address) 
 }
 
 Result ParametersUtil::setParams(const AudioParameter& param) {
-    int halStatus = halSetParameters(param.toString().c_str());
+    int halStatus = halSetParameters(param.toString().string());
     return util::analyzeStatus(halStatus);
 }
 
