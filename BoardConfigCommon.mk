@@ -21,19 +21,23 @@ DEXPREOPT_GENERATE_APEX_IMAGE := true
 TARGET_ARCH := arm64
 TARGET_ARCH_VARIANT := armv8-2a-dotprod
 TARGET_CPU_ABI := arm64-v8a
-TARGET_CPU_VARIANT := cortex-a55
+TARGET_CPU_ABI2 :=
+TARGET_CPU_VARIANT := generic
+TARGET_CPU_VARIANT_RUNTIME := cortex-a76
 
 TARGET_2ND_ARCH := arm
 TARGET_2ND_ARCH_VARIANT := armv8-2a
 TARGET_2ND_CPU_ABI := armeabi-v7a
 TARGET_2ND_CPU_ABI2 := armeabi
-TARGET_2ND_CPU_VARIANT := cortex-a55
+TARGET_2ND_CPU_VARIANT := generic
+TARGET_2ND_CPU_VARIANT_RUNTIME := cortex-a76
 
 # Audio
 AUDIO_FEATURE_ENABLED_24BITS_CAMCORDER := true
 AUDIO_FEATURE_ENABLED_A2DP_OFFLOAD := true
 AUDIO_FEATURE_ENABLED_AHAL_EXT := false
 AUDIO_FEATURE_ENABLED_CIRRUS_SPKR_PROTECTION := true
+AUDIO_FEATURE_ENABLED_COMPRESS_VOIP := false
 AUDIO_FEATURE_ENABLED_DLKM := false
 AUDIO_FEATURE_ENABLED_HDMI_SPK := true
 AUDIO_FEATURE_ENABLED_INSTANCE_ID := true
@@ -63,15 +67,11 @@ TARGET_NO_RADIOIMAGE := true
 TARGET_NO_RPC := true
 
 # Camera
-$(call soong_config_set,samsungCameraVars,needs_sec_reserved_field,true)
+SOONG_CONFIG_NAMESPACES += samsung_sm6150CameraVars
+SOONG_CONFIG_samsung_sm6150CameraVars += \
+    samsung_sm6150_model
 
-SOONG_CONFIG_NAMESPACES += samsungCameraVars
-SOONG_CONFIG_samsungCameraVars += extra_ids
-SOONG_CONFIG_samsungCameraVars += camera_32bit
-SOONG_CONFIG_samsungCameraVars_camera_32bit := true
-# ID=52 is depth
-# ID=54 is macro
-SOONG_CONFIG_samsungCameraVars_extra_ids := 54,52
+SOONG_CONFIG_samsung_sm6150CameraVars_samsung_sm6150_model := $(TARGET_DEVICE)
 
 USE_CAMERA_STUB := false
 USE_DEVICE_SPECIFIC_CAMERA := true
@@ -121,17 +121,11 @@ USE_OPENGL_RENDERER := true
 VSYNC_EVENT_PHASE_OFFSET_NS := 2000000
 
 # HIDL
-DEVICE_FRAMEWORK_COMPATIBILITY_MATRIX_FILE := \
-    hardware/qcom-caf/common/vendor_framework_compatibility_matrix.xml \
-    hardware/qcom-caf/common/vendor_framework_compatibility_matrix_legacy.xml \
-    hardware/samsung/vintf/samsung_framework_compatibility_matrix.xml \
-    vendor/aosp/config/device_framework_matrix.xml \
-
 DEVICE_MANIFEST_FILE := \
     $(COMMON_PATH)/manifest.xml
 
 DEVICE_MATRIX_FILE := \
-    hardware/qcom-caf/common/compatibility_matrix.xml
+    $(COMMON_PATH)/compatibility_matrix.xml
 
 # HWUI
 HWUI_COMPILE_FOR_PERF := true
@@ -156,16 +150,11 @@ BOARD_RAMDISK_OFFSET := 0x02000000
 BOARD_MKBOOTIMG_ARGS := --dtb_offset $(BOARD_DTB_OFFSET) --header_version $(BOARD_BOOT_HEADER_VERSION) --kernel_offset $(BOARD_KERNEL_OFFSET) --ramdisk_offset $(BOARD_RAMDISK_OFFSET) --tags_offset $(BOARD_KERNEL_TAGS_OFFSET)
 TARGET_KERNEL_ARCH := arm64
 TARGET_KERNEL_CLANG_COMPILE := true
-TARGET_KERNEL_CLANG_VERSION := r487747c
-TARGET_KERNEL_CLANG_PATH := $(abspath .)/prebuilts/clang/host/linux-x86/clang-$(TARGET_KERNEL_CLANG_VERSION)
 TARGET_KERNEL_SOURCE := kernel/samsung/a71
 TARGET_KERNEL_VERSION := 4.14
 
 # Keymaster
 TARGET_KEYMASTER_VARIANT := samsung
-
-# Light
-$(call soong_config_set,samsungVars,target_specific_header_path,$(COMMON_PATH)/include)
 
 # Lineage Health
 TARGET_HEALTH_CHARGING_CONTROL_CHARGING_PATH := /sys/class/power_supply/battery/batt_slate_mode
@@ -174,13 +163,12 @@ TARGET_HEALTH_CHARGING_CONTROL_CHARGING_DISABLED := 1
 TARGET_HEALTH_CHARGING_CONTROL_SUPPORTS_BYPASS := false
 
 # Partitions
-include vendor/aosp/config/BoardConfigReservedSize.mk
-
 BOARD_BOOTIMAGE_PARTITION_SIZE := 67108864
 BOARD_CACHEIMAGE_PARTITION_SIZE := 419430400
 BOARD_DTBOIMG_PARTITION_SIZE := 10485760
 BOARD_FLASH_BLOCK_SIZE := 262144 # (BOARD_KERNEL_PAGESIZE * 64)
 BOARD_RECOVERYIMAGE_PARTITION_SIZE := 67108864
+BOARD_USERDATAIMAGE_PARTITION_SIZE := 117732929536
 
 BOARD_SUPER_PARTITION_SIZE := 10385096704
 BOARD_SUPER_PARTITION_GROUPS := samsung_dynamic_partitions
@@ -199,6 +187,14 @@ BOARD_SYSTEMIMAGE_FILE_SYSTEM_TYPE := ext4
 BOARD_SYSTEM_EXTIMAGE_FILE_SYSTEM_TYPE := ext4
 BOARD_USERDATAIMAGE_FILE_SYSTEM_TYPE := f2fs
 BOARD_VENDORIMAGE_FILE_SYSTEM_TYPE := ext4
+
+BOARD_ODMIMAGE_EXTFS_INODE_COUNT := -1
+BOARD_PRODUCTIMAGE_EXTFS_INODE_COUNT := -1
+BOARD_VENDORIMAGE_EXTFS_INODE_COUNT := -1
+BOARD_ODMIMAGE_PARTITION_RESERVED_SIZE := 50000000
+BOARD_PRODUCTIMAGE_PARTITION_RESERVED_SIZE := 1957691392
+BOARD_SYSTEMIMAGE_PARTITION_RESERVED_SIZE := 3000000000
+BOARD_VENDORIMAGE_PARTITION_RESERVED_SIZE := 400000000
 
 BOARD_USES_METADATA_PARTITION := true
 
@@ -232,6 +228,7 @@ TARGET_USERIMAGES_USE_F2FS := true
 TARGET_RELEASETOOLS_EXTENSIONS := $(COMMON_PATH)/releasetools
 
 # RIL
+BOARD_PROVIDES_LIBRIL := true
 ENABLE_VENDOR_RIL_SERVICE := true
 
 # Rootfs
@@ -243,11 +240,11 @@ TARGET_FS_CONFIG_GEN := $(COMMON_PATH)/config.fs
 
 # SEPolicy
 TARGET_SEPOLICY_DIR := msmsteppe
-include device/qcom/sepolicy_vndr/SEPolicy.mk
+include device/qcom/sepolicy_vndr-legacy-um/SEPolicy.mk
 include hardware/samsung-ext/interfaces/sepolicy/SEPolicy.mk
 
 BOARD_VENDOR_SEPOLICY_DIRS += $(COMMON_PATH)/sepolicy/vendor
-PRODUCT_PRIVATE_SEPOLICY_DIRS += $(COMMON_PATH)/sepolicy/private 
+PRODUCT_PRIVATE_SEPOLICY_DIRS += $(COMMON_PATH)/sepolicy/private
 PRODUCT_PUBLIC_SEPOLICY_DIRS += $(COMMON_PATH)/sepolicy/public
 
 # Treble
