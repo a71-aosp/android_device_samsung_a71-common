@@ -10,8 +10,9 @@ $(call inherit-product, $(SRC_TARGET_DIR)/product/developer_gsi_keys.mk)
 $(call inherit-product, $(SRC_TARGET_DIR)/product/emulated_storage.mk)
 $(call inherit-product, $(SRC_TARGET_DIR)/product/full_base_telephony.mk)
 $(call inherit-product, $(SRC_TARGET_DIR)/product/non_ab_device.mk)
+$(call inherit-product, $(SRC_TARGET_DIR)/product/updatable_apex.mk)
 $(call inherit-product, frameworks/native/build/phone-xhdpi-6144-dalvik-heap.mk)
-$(call inherit-product, hardware/qcom-caf/common/common.mk)
+$(call inherit-product, packages/apps/ViPER4AndroidFX/config.mk)
 
 COMMON_PATH := device/samsung/a71-common
 
@@ -19,6 +20,7 @@ PRODUCT_BUILD_SUPER_PARTITION := false
 PRODUCT_CHARACTERISTICS := nosdcard
 PRODUCT_SET_DEBUGFS_RESTRICTIONS := true
 PRODUCT_SHIPPING_API_LEVEL := 29
+PRODUCT_TARGET_VNDK_VERSION := 30
 PRODUCT_USE_DYNAMIC_PARTITIONS := true
 
 # AID/fs configs
@@ -34,6 +36,10 @@ PRODUCT_AAPT_PREBUILT_DPI := xxhdpi xhdpi hdpi
 PRODUCT_PACKAGES += \
     AntHalService-Soong \
 
+# Atrace
+PRODUCT_PACKAGES += \
+    android.hardware.atrace@1.0-service \
+
 # Audio
 PRODUCT_PACKAGES += \
     android.hardware.audio@6.0-impl.sm6150 \
@@ -41,7 +47,7 @@ PRODUCT_PACKAGES += \
     android.hardware.audio.common-util.vendor \
     android.hardware.audio.service \
     android.hardware.bluetooth.audio-impl \
-    android.media.audio.common.types-V2-cpp \
+    android.hardware.soundtrigger@2.2-impl \
     audio.primary.default \
     audio.primary.sm6150:32 \
     audio.r_submix.default \
@@ -56,9 +62,6 @@ PRODUCT_PACKAGES += \
     tinymix \
     tinypcminfo \
     tinyplay \
-
-PRODUCT_PACKAGES += \
-    SamsungDAP
 
 # Audio SoundFX
 PRODUCT_PACKAGES += \
@@ -107,16 +110,15 @@ PRODUCT_PACKAGES += \
     android.frameworks.cameraservice.device@2.0.vendor \
     android.frameworks.cameraservice.service@2.1.vendor \
     android.hardware.camera.device@3.7.vendor \
-    android.hardware.camera.provider-service_32.samsung \
+    android.hardware.camera.provider@2.6-service.sm6150 \
     android.hardware.camera.provider@2.7.vendor \
     libcamera2ndk_vendor \
-    libcamera_metadata.vendor \
     libdng_sdk \
     libdng_sdk.vendor \
     libgui_vendor:32 \
     libgrallocusage.vendor \
     libstdc++ \
-    libstdc++_vendor \
+    libstdc++.vendor \
     vendor.qti.hardware.camera.device@1.0.vendor \
     vendor.qti.hardware.camera.postproc@1.0.vendor \
 
@@ -128,15 +130,6 @@ PRODUCT_PACKAGES += \
 PRODUCT_PACKAGES += \
     charger_res_images_vendor \
     libsuspend \
-    vendor.lineage.fastcharge@1.0-service.samsung \
-
-# CNE
-PRODUCT_PACKAGES += \
-    CneApp.libvndfwk_detect_jni.qti_vendor_symlink \
-
-# Configstore
-PRODUCT_PACKAGES += \
-    disable_configstore \
 
 # Data
 $(call inherit-product, vendor/qcom/opensource/dataservices/dataservices_vendor_product.mk)
@@ -151,8 +144,6 @@ PRODUCT_PACKAGES += \
     android.hardware.drm@1.3.vendor \
 
 # Fastbootd
-TARGET_BOARD_FASTBOOT_INFO_FILE := $(COMMON_PATH)/fastboot-info.txt
-
 PRODUCT_PACKAGES += \
     fastbootd \
 
@@ -160,7 +151,7 @@ PRODUCT_PACKAGES += \
 PRODUCT_PACKAGES += \
     android.hardware.biometrics.face@1.0.vendor \
     android.hardware.biometrics.fingerprint@2.1.vendor \
-    android.hardware.biometrics.fingerprint-service.samsung \
+    android.hardware.biometrics.fingerprint@2.3-service.samsung \
 
 # FM
 PRODUCT_PACKAGES += \
@@ -197,7 +188,6 @@ PRODUCT_PACKAGES += \
     libsdmcore \
     libsdmutils \
     libion \
-    libion.vendor \
     libvulkan \
     vendor.display.config@1.11.vendor \
     vendor.display.config@2.0.vendor \
@@ -214,14 +204,11 @@ PRODUCT_PACKAGES += \
     android.hardware.health-service.samsung \
     android.hardware.health-service.samsung-recovery \
     android.hardware.health@2.1.vendor \
-    vendor.lineage.health-service.default \
 
 # HIDL
 PRODUCT_PACKAGES += \
-    android.hidl.allocator@1.0.vendor \
     android.hidl.base@1.0 \
     android.hidl.base@1.0.vendor \
-    android.hidl.memory@1.0.vendor \
     libhidltransport \
     libhidltransport.vendor \
     libhwbinder \
@@ -248,13 +235,12 @@ PRODUCT_PACKAGES += \
 PRODUCT_PACKAGES += \
     android.hardware.light-service.samsung \
 
-# LiveDisplay
-PRODUCT_PACKAGES += \
-    vendor.lineage.livedisplay@2.0-service.samsung-qcom.sm6150 \
-
 # Media
 PRODUCT_PACKAGES += \
     libavservices_minijail.vendor \
+    libavservices_minijail_vendor \
+    libcodec2_hidl@1.0.vendor \
+    libcodec2_hidl@1.1.vendor \
     libcodec2_vndk.vendor \
     libsfplugin_ccodec \
 
@@ -279,8 +265,13 @@ PRODUCT_COPY_FILES += \
     $(COMMON_PATH)/rootdir/vendor/etc/media_profiles_vendor.xml:$(TARGET_COPY_OUT_VENDOR)/etc/media_profiles_vendor.xml \
 
 PRODUCT_COPY_FILES += \
-    frameworks/av/media/libstagefright/data/media_codecs_google_c2_video.xml:$(TARGET_COPY_OUT_VENDOR)/etc/media_codecs_google_c2_video.xml \
+    frameworks/av/media/libstagefright/data/media_codecs_google_audio.xml:$(TARGET_COPY_OUT_VENDOR)/etc/media_codecs_google_audio.xml \
     frameworks/av/media/libstagefright/data/media_codecs_google_c2.xml:$(TARGET_COPY_OUT_VENDOR)/etc/media_codecs_google_c2.xml \
+    frameworks/av/media/libstagefright/data/media_codecs_google_c2_audio.xml:$(TARGET_COPY_OUT_VENDOR)/etc/media_codecs_google_c2_audio.xml \
+    frameworks/av/media/libstagefright/data/media_codecs_google_c2_video.xml:$(TARGET_COPY_OUT_VENDOR)/etc/media_codecs_google_c2_video.xml \
+    frameworks/av/media/libstagefright/data/media_codecs_google_telephony.xml:$(TARGET_COPY_OUT_VENDOR)/etc/media_codecs_google_telephony.xml \
+    frameworks/av/media/libstagefright/data/media_codecs_google_video.xml:$(TARGET_COPY_OUT_VENDOR)/etc/media_codecs_google_video.xml \
+    frameworks/av/media/libstagefright/data/media_codecs_google_video_le.xml:$(TARGET_COPY_OUT_VENDOR)/etc/media_codecs_google_video_le.xml \
 
 # Memtrack
 PRODUCT_PACKAGES += \
@@ -397,8 +388,8 @@ PRODUCT_COPY_FILES += \
 
 # Protobuf
 PRODUCT_PACKAGES += \
-    libprotobuf-cpp-full-3.9.1-vendorcompat \
-    libprotobuf-cpp-lite-3.9.1-vendorcompat \
+    libprotobuf-cpp-full-vendorcompat \
+    libprotobuf-cpp-lite-vendorcompat \
 
 # Public Libraries
 PRODUCT_COPY_FILES += \
@@ -408,14 +399,9 @@ PRODUCT_COPY_FILES += \
 TARGET_FWK_SUPPORTS_FULL_VALUEADDS := true
 
 PRODUCT_PACKAGES += \
-    libcurl.vendor:64 \
     libjson \
-    libjsoncpp.vendor:64 \
-    libpng.vendor:32 \
-    libprocessgroup.vendor \
     libqti_vndfwk_detect \
     libqti_vndfwk_detect.vendor \
-    libsysutils.vendor:64 \
     libvndfwk_detect_jni.qti \
     libvndfwk_detect_jni.qti.vendor \
 
@@ -482,18 +468,9 @@ PRODUCT_PACKAGES += \
 PRODUCT_PACKAGES += \
     android.hardware.radio@1.5.vendor \
     android.hardware.radio.config@1.2.vendor \
-    android.hardware.radio.config-V1-ndk.vendor:64 \
-    android.hardware.radio.data-V1-ndk.vendor:64 \
     android.hardware.radio.deprecated@1.0.vendor \
-    android.hardware.radio.messaging-V1-ndk.vendor:64 \
-    android.hardware.radio.modem-V1-ndk.vendor:64 \
-    android.hardware.radio.network-V1-ndk.vendor:64 \
-    android.hardware.radio.sim-V1-ndk.vendor:64 \
-    android.hardware.radio.voice-V1-ndk.vendor:64 \
     android.hardware.secure_element@1.0.vendor \
-    libnetutils.vendor:64 \
     librilutils \
-    libsqlite.vendor:64 \
     secril_config_svc \
 
 # Seccomp Policy
@@ -508,7 +485,6 @@ PRODUCT_COPY_FILES += \
 
 # Sensors
 PRODUCT_PACKAGES += \
-    android.frameworks.sensorservice@1.0.vendor \
     android.hardware.sensors-service.samsung-multihal \
     android.hardware.sensors@2.0-ScopedWakelock.vendor \
     libsensorndkbridge \
@@ -522,9 +498,7 @@ PRODUCT_COPY_FILES += \
 # Soong Namespaces
 PRODUCT_SOONG_NAMESPACES += \
     $(COMMON_PATH) \
-    hardware/qcom-caf/common/libqti-perfd-client \
     hardware/samsung \
-    hardware/samsung-ext/interfaces \
     vendor/qcom/opensource/usb/etc \
 
 # Telephony
@@ -540,19 +514,17 @@ PRODUCT_PACKAGES += \
 PRODUCT_BOOT_JARS += \
     telephony-ext \
 
-# Touch
+# Thermal
 PRODUCT_PACKAGES += \
-    vendor.lineage.touch@1.0-service.sm6150 \
+    android.hardware.thermal@2.0-service.qti \
 
 # USB
 PRODUCT_PACKAGES += \
-    android.hardware.usb@1.3-service.dual_role_usb \
     android.hardware.usb-service.samsung \
     android.hardware.usb@1.1.vendor \
 
 # Vendor Service Manager
 PRODUCT_PACKAGES += \
-    libcrypto-v33 \
     vndservicemanager \
 
 PRODUCT_COPY_FILES += \
@@ -564,9 +536,8 @@ PRODUCT_PACKAGES += \
 
 # WiFi
 PRODUCT_PACKAGES += \
-    android.hardware.wifi-service \
+    android.hardware.wifi@1.0-service \
     ConnectivityOverlay \
-    firmware_WCNSS_qcom_cfg.ini_symlink \
     hostapd \
     libwifi-hal-qcom \
     libwpa_client \
