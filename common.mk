@@ -58,9 +58,6 @@ PRODUCT_PACKAGES += \
     tinypcminfo \
     tinyplay \
 
-PRODUCT_PACKAGES += \
-    SamsungDAP
-
 # Audio SoundFX
 PRODUCT_PACKAGES += \
     libaudiopreprocessing \
@@ -594,14 +591,6 @@ PRODUCT_PACKAGES += \
 PRODUCT_PACKAGES += \
     vendor.samsung_ext.hardware.camera.flashlight-service \
     FlashControl
-
-# SamsungAdvancedDisplay
-PRODUCT_PACKAGES += \
-    AdvancedDisplay \
-
-# SamsungDoze
-PRODUCT_PACKAGES += \
-    SamsungDoze \
 
 # Get non-open-source specific aspects
 $(call inherit-product, vendor/samsung/a71-common/a71-common-vendor.mk)
