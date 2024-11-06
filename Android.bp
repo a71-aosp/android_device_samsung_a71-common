@@ -4,6 +4,8 @@
 // SPDX-License-Identifier: Apache-2.0
 //
 
+allow_undefined_symbols: true
+
 soong_namespace {
     imports: [
         "hardware/qcom-caf/common/libqti-perfd-client",
