@@ -21,6 +21,8 @@ include $(call all-makefiles-under,$(LOCAL_PATH))
 
 include $(CLEAR_VARS)
 
+LOCAL_ALLOW_UNDEFINED_SYMBOLS := true
+
 # A/B builds require us to create the mount points at compile time.
 # Just creating it for all cases since it does not hurt.
 BT_FIRMWARE_MOUNT_POINT := $(TARGET_OUT_VENDOR)/bt_firmware
