@@ -124,14 +124,6 @@ $(call inherit-product, vendor/qcom/opensource/dataservices/dataservices_vendor_
 TARGET_SCREEN_HEIGHT := 2400
 TARGET_SCREEN_WIDTH := 1080
 
-# SamsungAdvancedDisplay
-PRODUCT_PACKAGES += \
-    AdvancedDisplay \
-
-# SamsungDoze
-PRODUCT_PACKAGES += \
-    SamsungDoze \
-
 # DRM
 PRODUCT_PACKAGES += \
     android.hardware.drm-service.clearkey \
@@ -462,6 +454,11 @@ PRODUCT_COPY_FILES += \
     $(COMMON_PATH)/rootdir/vendor/etc/wifi/p2p_supplicant_overlay.conf:$(TARGET_COPY_OUT_VENDOR)/etc/wifi/p2p_supplicant_overlay.conf \
     $(COMMON_PATH)/rootdir/vendor/etc/wifi/WCNSS_qcom_cfg.ini:$(TARGET_COPY_OUT_VENDOR)/etc/wifi/WCNSS_qcom_cfg.ini \
     $(COMMON_PATH)/rootdir/vendor/etc/wifi/wpa_supplicant_overlay.conf:$(TARGET_COPY_OUT_VENDOR)/etc/wifi/wpa_supplicant_overlay.conf \
+
+# Samsung Ext
+PRODUCT_PACKAGES += \
+    vendor.samsung_ext.hardware.camera.flashlight-service \
+    FlashControl
 
 # Get non-open-source specific aspects
 $(call inherit-product, vendor/samsung/a71-common/a71-common-vendor.mk)
