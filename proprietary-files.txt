@@ -464,7 +464,7 @@ vendor/lib/libhdcp1prov.so
 vendor/lib/libhdcp2p2prov.so
 vendor/lib/libhdcpsrm.so
 vendor/lib/liboemcrypto.so
-vendor/lib/libwvhidl.so
+vendor/lib/libwvhidl.so;DISABLE_CHECKELF
 vendor/lib64/libcpion.so
 vendor/lib64/libhdcp1prov.so
 vendor/lib64/libhdcp2p2prov.so
